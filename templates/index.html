@@ -15,7 +15,7 @@
             justify-content: center;
             height: 80vh;
             background-color: #f4f4f4;
-            padding-top: 30px;  /*Push content down so it's not hidden under the banner */
+            padding-top: 30px;
         }
         h2 {
             font-size: 2rem;
@@ -90,8 +90,8 @@
             gap: 20px;
         }
         .window {
-            width: 500px;  /* Fixed width */
-            height: 400px;  /* Fixed height */
+            width: 500px;
+            height: 400px;
             border: 2px solid black;
             padding: 10px;
             overflow: auto;
@@ -114,12 +114,11 @@
             font-weight: bold;
         }
         input[type="text"] {
-            width: 100px;   /* Set custom width */
-            height: 30px;   /* Set custom height */
-            padding: 5px;   /* Add padding inside the text box */
-            font-size: 16px; /* Set the font size */
+            width: 100px;
+            height: 30px;
+            padding: 5px;
+            font-size: 16px;
         }
-        /* Freeze banner bar */
         .banner {
             position: fixed;
             top: 0;
@@ -131,12 +130,11 @@
             font-size: 20px;
             font-weight: bold;
             padding: 15px 20px;
-            z-index: 1000; /* Keeps it above other content */
+            z-index: 1000;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
-        /* Credit text */
         .credit {
             font-size: 12px;
             font-weight: normal;
@@ -174,7 +172,6 @@
             margin-top: 10px;
             padding: 5px 10px;
         }
-        /* Image styling */
         .selection-image {
             width: 250px;
             height: 250px;
@@ -219,43 +216,40 @@
     <h2>Choose an Utility</h2>
     <div class="controls">
         <div class="button-image-pair">
-            <button class="selection-button" onclick="window.location.href='utility//lasercutting.html'">Laser Cutting Utility</button>
-            <img src="Img//Pi7_image (1).jpg" alt="Laser Utility Image" class="selection-image">
+            <button class="selection-button" onclick="window.location.href='{{ url_for('utility_page', page='lasercutting.html') }}'">Laser Cutting Utility</button>
+            <img src="{{ url_for('static', filename='Img/Pi7_image (1).jpg') }}" alt="Laser Utility Image" class="selection-image">
         </div>
         <div class="button-image-pair">
-            <button class="selection-button" onclick="window.location.href='utility//robholddeburring.html'">RBT Hold Deburring Utility</button>
+            <button class="selection-button" onclick="window.location.href='{{ url_for('utility_page', page='robholddeburring.html') }}'">RBT Hold Deburring Utility</button>
             <div class="image-wrapper">
-                <img id="deburringImage" src="Img/Pi7_image (2).jpg" alt="Deburring Utility Image" class="fade-image">
+                <img id="deburringImage" src="{{ url_for('static', filename='Img/Pi7_image (2).jpg') }}" alt="Deburring Utility Image" class="fade-image">
             </div>
         </div>
         <div class="button-image-pair">
-            <button class="selection-button" onclick="window.location.href='utility//unavailable.html'">Welding Utility</button>
-            <img src="Img//unavailable.jpg" alt="Welding Utility Image" class="selection-image">
+            <button class="selection-button" onclick="window.location.href='{{ url_for('utility_page', page='unavailable.html') }}'">Welding Utility</button>
+            <img src="{{ url_for('static', filename='Img/unavailable.jpg') }}" alt="Welding Utility Image" class="selection-image">
         </div>
         <div class="button-image-pair">
-            <button class="selection-button" onclick="window.location.href='utility//surfacegrinding.html'">Surface Grinding Utility</button>
-            <img src="Img//image (6).jpg" alt="Surface Grinding Utility Image" class="selection-image">
+            <button class="selection-button" onclick="window.location.href='{{ url_for('utility_page', page='surfacegrinding.html') }}'">Surface Grinding Utility</button>
+            <img src="{{ url_for('static', filename='Img/image (6).jpg') }}" alt="Surface Grinding Utility Image" class="selection-image">
         </div>
     </div>
 
     <script>
-        // Ensure the script runs after the DOM is fully loaded
         window.onload = function() {
             const deburringImages = [
-                "Img/Pi7_image (2).jpg",
-                "Img/image (4).jpg"
+                "{{ url_for('static', filename='Img/Pi7_image (2).jpg') }}",
+                "{{ url_for('static', filename='Img/image (4).jpg') }}"
             ];
 
             const deburringImageElement = document.getElementById("deburringImage");
             let deburringIndex = 0;
 
-            // Preload images
             deburringImages.forEach(src => {
                 const img = new Image();
                 img.src = src;
             });
 
-            // Image changing function
             function changeDeburringImage() {
                 if (!deburringImageElement) return;
 
@@ -273,4 +267,3 @@
     </script>
 </body>
 </html>
-
