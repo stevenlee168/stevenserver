@@ -66,7 +66,7 @@ def process_file_U():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-def process_content(text):
+def process_content_upper(text):
     # Ở đây bạn có thể gọi addToolAdj hoặc addCopyrightNotice
     return text.upper()
     
@@ -160,5 +160,6 @@ def process_file(uploaded_text, moveAbs, moveJ, moveL, moveC,
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
