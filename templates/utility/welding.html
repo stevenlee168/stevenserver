@@ -499,128 +499,33 @@
 
         function processFile() {
             if (uploadedText) {
-                let speedMoveAbs = document.getElementById("moveAbs").value; 
-                let speedMoveJ = document.getElementById("moveJ").value;
-                let speedMoveL = document.getElementById("moveL").value;
-                let speedMoveC = document.getElementById("moveC").value;
-                
-                let zoneMoveAbs = document.getElementById("zoneAbs").value;
-                let zoneMoveJ = document.getElementById("zoneJ").value;
-                let zoneMoveL = document.getElementById("zoneL").value;
-                let zoneMoveC = document.getElementById("zoneC").value;
-                let tool = document.getElementById("tool").value + '_Adj';
-                let selectedWobj = document.getElementById("userframe").value;
-                let tool_adj = document.getElementById("tool").value + '_Adj';
-                let tool_og = document.getElementById("tool").value;
-
-                let processedText = uploadedText.replace(/PERS.*/g, '!===============================================================');
-
-                console.log(tool_og);
-
-                // Update MoveAbsJ Speed and Zone
-                processedText = processedText.replace(
-                    /MoveAbsJ\s+\[\[([^\]]+)\],\[([^\]]+)\]\],(\w+),(\w+),(\w+)\\Wobj:=(\w+);/g,
-                    `MoveAbsJ [[$1],[$2]],${speedMoveAbs},${zoneMoveAbs},${tool}\\Wobj:=${selectedWobj};`
-                );
-
-                // Update MoveJ Speed and Zone
-                processedText = processedText.replace(
-                    /MoveJ\s+\[\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\]\],\[[^\]]+\],(.*?),(\w+)\\Wobj:=(\w+);/g,
-                    `MoveJ [[$1],[$2],[$3],[$4]],${speedMoveJ},${zoneMoveJ},${tool}\\Wobj:=${selectedWobj};`
-                );
-
-                // Update MoveL Speed and Zone
-                processedText = processedText.replace(
-                    /MoveL\s+\[\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\]\],\[[^\]]+\],(.*?),(\w+)\\Wobj:=(\w+);/g,
-                    `MoveL [[$1],[$2],[$3],[$4]],${speedMoveL},${zoneMoveL},${tool}\\Wobj:=${selectedWobj};`
-                );
-
-                // Update MoveC Speed and Zone
-                processedText = processedText.replace(
-                    /MoveC\s+\[\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\]\],\[\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\]\],\[[^\]]+\],(.*?),(\w+)\\Wobj:=(\w+);/g,
-                    `MoveC [[$1],[$2],[$3],[$4]],[[$5],[$6],[$7],[$8]],${speedMoveC},${zoneMoveC},${tool}\\Wobj:=${selectedWobj};`
-                );
-
-                // Update Tool
-                //processedText = processedText.replace(/Tool:=\S+;/, `Tool:=${tool};`);
-
-                // Add Tool Adj if there's a comment
-                processedText = addToolAdj(processedText,tool_adj,tool_og);
-
-                processedText = addCopyrightNotice(processedText);
-
-                // Process comments to replace non-English content inside '!'
-                processedText = processComments(processedText);
-
-                document.getElementById("processedContent").textContent = processedText;
-                document.getElementById("processedContent").innerHTML = processedText;
+                const data = {
+                    uploadedText: document.getElementById('uploadedText').value,
+                    moveAbs: document.getElementById('moveAbs').value,
+                    moveJ: document.getElementById('moveJ').value,
+                    moveL: document.getElementById('moveL').value,
+                    moveC: document.getElementById('moveC').value,
+                    zoneAbs: document.getElementById('zoneAbs').value,
+                    zoneJ: document.getElementById('zoneJ').value,
+                    zoneL: document.getElementById('zoneL').value,
+                    zoneC: document.getElementById('zoneC').value,
+                    tool: document.getElementById('tool').value,
+                    userframe: document.getElementById('userframe').value
+                };
+    
+                fetch('/process', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                })
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('result').textContent = data.processedText;
+                });
             } else {
                 showMatrixAlert();
                 alert("Please upload a file first.");
             }
-        }
-
-        // Function to check if a string contains non-English characters
-        function containsNonEnglishCharacters(str) {
-            return /[^\x00-\x7F]/.test(str);  // Checks for non-ASCII characters
-        }
-
-        // Replace the content inside '!' comment if it contains non-English characters
-        function processComments(text) {
-            return text.replace(/!([^!]+)!/g, function(match, content) {
-                if (containsNonEnglishCharacters(content)) {
-                    const updatedContent = content.replace(/^[^\x00-\x7F]+/, '').trim();
-                    return `! undefine language ${updatedContent} !`;  // Replace with "undefine language"
-                } else {
-                    return match;
-                }
-            });
-        }
-
-        // Function to add Tool_Adj:=Modify_rTCP_Offset(Tool,0,0,0,0,0,0); after comments
-        function addToolAdj(text,tool_adj,tool_og) {
-            const lines = text.split("\n");
-            let newText = "";
-
-            for (let i = 0; i < lines.length; i++) {
-                newText += lines[i] + "\n"; // Add current line
-
-                if (lines[i].trim().startsWith("! ---")) {
-                    // If the current line is a comment
-                        newText += `    <span class="highlight">${tool_adj}:=Modify_rTCP_Offset(${tool_og},0,0,0,0,0,0);</span>\n`;  // Insert Tool_Adj:=Modify_rTCP_Offset(Tool,0,0,0,0,0,0);
-                }
-            }
-            return newText;
-        }
-
-        function addCopyrightNotice(processedText) {
-            const currentYear = new Date().getFullYear();
-            const copyrightNotice = 
-`  !===============================================================
-  !Copyright ${currentYear} Steven Lee - Da Shiang Automation - DTboost
-  !
-  !WARNING: This code is the intellectual property of Steven Lee - Da Shiang Automation. 
-  !You may NOT modify this code unless you have explicit permission from the author. 
-  !Unauthorized modification of this code may result in legal action.
-  !
-  !DISCLAIMER: The author assumes no responsibility or liability for any modifications made to this code 
-  !by third parties. Any modifications are made at the user's own risk and the user assumes all 
-  !responsibility for any consequences resulting from such modifications.
-  !===============================================================\n`;
-
-            const lines = processedText.split("\n");
-            let newText = "";
-
-            for (let i = 0; i < lines.length; i++) {
-                newText += lines[i] + "\n"; // Add current line
-
-                // Check if the current line is the start of a module
-                if (lines[i].trim().startsWith("MODULE")) {
-                    newText += copyrightNotice; // Insert copyright notice after the module line
-                }
-            }
-            
-            return newText;
         }
 
         function saveFile() {
@@ -684,8 +589,6 @@
           document.getElementById('myModal').style.display = 'none';
         }
 
-
-        
     </script>
 </body>
 </html>
