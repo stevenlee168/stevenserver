@@ -508,6 +508,7 @@
             }
 
             const formData = new FormData();
+            document.getElementById("fileContent").textContent = uploadedText;
             formData.append("file", file);
 
             fetch("/process-file", {
