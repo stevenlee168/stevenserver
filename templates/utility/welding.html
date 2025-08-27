@@ -500,7 +500,7 @@
         function processFile() {
             if (uploadedText) {
                 const data = {
-                    uploadedText: document.getElementById('uploadedText').value,
+                    uploadedText: document.getElementById('fileContent').value,
                     moveAbs: document.getElementById('moveAbs').value,
                     moveJ: document.getElementById('moveJ').value,
                     moveL: document.getElementById('moveL').value,
@@ -588,12 +588,6 @@
         function closeModal() {
           document.getElementById('myModal').style.display = 'none';
         }
-
-
-        document.addEventListener("DOMContentLoaded", function() {
-            const uploadedText = document.getElementById('uploadedText').value;
-            console.log(uploadedText);
-        });
 
     </script>
 </body>
