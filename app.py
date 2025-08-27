@@ -26,7 +26,7 @@ def utility_page(page):
 def process():
     data = request.json
     result = process_file(
-        uploaded_text=data.get('uploadedText', ''),
+        content,
         moveAbs=data.get('moveAbs', ''),
         moveJ=data.get('moveJ', ''),
         moveL=data.get('moveL', ''),
@@ -171,6 +171,7 @@ def process_file(uploaded_text, moveAbs, moveJ, moveL, moveC,
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
