@@ -1,8 +1,13 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify
 from datetime import datetime
 import re
+import os
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'uploads'
+
+# Đảm bảo thư mục uploads tồn tại
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Trang chính
 @app.route('/')
@@ -35,6 +40,36 @@ def process():
     )
     return jsonify({"processedText": result})
 
+@app.route("/process-file", methods=["POST"])
+def process_file_U():
+    try:
+        if 'file' not in request.files:
+            return jsonify({"error": "No file part"}), 400
+        
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({"error": "No selected file"}), 400
+
+        # Lưu file tạm
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        file.save(file_path)
+
+        # Đọc nội dung file
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Gọi hàm xử lý Python
+        processed_text = process_content_upper(content)
+
+        return jsonify({"processedText": processed_text})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+def process_content(text):
+    # Ở đây bạn có thể gọi addToolAdj hoặc addCopyrightNotice
+    return text.upper()
+    
 # Copyright
 def add_copyright_notice(processed_text):
     current_year = datetime.now().year
@@ -125,4 +160,5 @@ def process_file(uploaded_text, moveAbs, moveJ, moveL, moveC,
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
