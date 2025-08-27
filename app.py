@@ -60,6 +60,7 @@ def process_file_U():
 
         # Lấy dữ liệu từ form
         moveAbs = request.form.get('moveAbs', '')
+        print(f"moveAbs received: {moveAbs}")
         moveJ = request.form.get('moveJ', '')
         moveL = request.form.get('moveL', '')
         moveC = request.form.get('moveC', '')
@@ -183,6 +184,7 @@ def process_file(uploaded_text, moveAbs, moveJ, moveL, moveC,
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
