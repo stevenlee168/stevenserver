@@ -72,7 +72,7 @@ def process_file_U():
             tool=data.get('tool', ''),
             userframe=data.get('userframe', '')
         )
-        return jsonify({"processedText": result}
+        return jsonify({"processedText": result})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -171,6 +171,7 @@ def process_file(uploaded_text, moveAbs, moveJ, moveL, moveC,
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
