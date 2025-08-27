@@ -58,10 +58,21 @@ def process_file_U():
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
 
-        # Gọi hàm xử lý Python
-        processed_text = process_content_upper(content)
-
-        return jsonify({"processedText": processed_text})
+        data = request.json
+        result = process_file(
+            uploaded_text=data.get('uploadedText', ''),
+            moveAbs=data.get('moveAbs', ''),
+            moveJ=data.get('moveJ', ''),
+            moveL=data.get('moveL', ''),
+            moveC=data.get('moveC', ''),
+            zoneAbs=data.get('zoneAbs', ''),
+            zoneJ=data.get('zoneJ', ''),
+            zoneL=data.get('zoneL', ''),
+            zoneC=data.get('zoneC', ''),
+            tool=data.get('tool', ''),
+            userframe=data.get('userframe', '')
+        )
+        return jsonify({"processedText": result}
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -160,6 +171,7 @@ def process_file(uploaded_text, moveAbs, moveJ, moveL, moveC,
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
