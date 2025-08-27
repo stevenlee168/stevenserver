@@ -484,7 +484,7 @@
         ];
         let uploadedText = "";
 
-        /*
+        
         function uploadFile() {
             const fileInput = document.getElementById("fileInput");
             const file = fileInput.files[0];
@@ -496,9 +496,9 @@
                 };
                 reader.readAsText(file);
             }
-        }*/
-
-        function uploadFile() {
+        }
+        
+        function processFile() {
             const fileInput = document.getElementById("fileInput");
             const file = fileInput.files[0];
 
@@ -507,8 +507,6 @@
                 return;
             }
 
-            const formData = new FormData();
-            document.getElementById("fileContent").textContent = uploadedText;
             formData.append("file", file);
 
             fetch("/process-file", {
@@ -525,10 +523,8 @@
                 document.getElementById("processedContent").textContent = data.processedText;
             })
             .catch(error => console.error("Error:", error));
-        }
-
-        function processFile() {
-            if (uploadedText) {
+            
+            /*if (uploadedText) {
                 const data = {
                     uploadedText: document.getElementById('fileContent').value,
                     moveAbs: document.getElementById('moveAbs').value,
@@ -555,7 +551,7 @@
             } else {
                 showMatrixAlert();
                 alert("Please upload a file first.");
-            }
+            }*/
         }
 
         function saveFile() {
