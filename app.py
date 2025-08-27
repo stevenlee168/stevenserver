@@ -58,19 +58,31 @@ def process_file_U():
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
 
+        # Lấy dữ liệu từ form
+        moveAbs = request.form.get('moveAbs', '')
+        moveJ = request.form.get('moveJ', '')
+        moveL = request.form.get('moveL', '')
+        moveC = request.form.get('moveC', '')
+        zoneAbs = request.form.get('zoneAbs', '')
+        zoneJ = request.form.get('zoneJ', '')
+        zoneL = request.form.get('zoneL', '')
+        zoneC = request.form.get('zoneC', '')
+        tool = request.form.get('tool', '')
+        userframe = request.form.get('userframe', '')
+        
         data = request.json
         result = process_file(
             content,
-            moveAbs=data.get('moveAbs', ''),
-            moveJ=data.get('moveJ', ''),
-            moveL=data.get('moveL', ''),
-            moveC=data.get('moveC', ''),
-            zoneAbs=data.get('zoneAbs', ''),
-            zoneJ=data.get('zoneJ', ''),
-            zoneL=data.get('zoneL', ''),
-            zoneC=data.get('zoneC', ''),
-            tool=data.get('tool', ''),
-            userframe=data.get('userframe', '')
+            moveAbs=moveAbs,
+            moveJ=moveJ,
+            moveL=moveL,
+            moveC=moveC,
+            zoneAbs=zoneAbs,
+            zoneJ=zoneJ,
+            zoneL=zoneL,
+            zoneC=zoneC,
+            tool=tool,
+            userframe=userframe
         )
         return jsonify({"processedText": result})
 
@@ -171,6 +183,7 @@ def process_file(uploaded_text, moveAbs, moveJ, moveL, moveC,
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
