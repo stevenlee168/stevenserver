@@ -513,7 +513,7 @@
             })
             .then(response => response.json())
             .then(result => {
-                document.getElementById("result").innerText = JSON.stringify(result);
+                document.getElementById("processedContent").innerText = JSON.stringify(result);
             })
             .catch(error => console.error("Error:", error));
         }
