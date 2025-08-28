@@ -504,41 +504,37 @@
 
             if (!file) {
                 alert("Please select a file first!");
+                showMatrixAlert();
                 return;
             }
 
             const formData = new FormData();
-            if (fileInput) {
-                formData.append("file", file);
-                formData.append("moveAbs", document.getElementById("moveAbs").value);
-                formData.append("moveJ", document.getElementById("moveJ").value);
-                formData.append("moveL", document.getElementById("moveL").value);
-                formData.append("moveC", document.getElementById("moveC").value);
-                formData.append("zoneAbs", document.getElementById("zoneAbs").value);
-                formData.append("zoneJ", document.getElementById("zoneJ").value);
-                formData.append("zoneL", document.getElementById("zoneL").value);
-                formData.append("zoneC", document.getElementById("zoneC").value);
-                formData.append("tool", document.getElementById("tool").value);
-                formData.append("userframe", document.getElementById("userframe").value);
-    
-                fetch("/process-file-welding", {
-                    method: "POST",
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.text().then(text => { throw new Error(text) });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    document.getElementById("processedContent").innerHTML = data.processedText;
-                })
-                .catch(error => console.error("Error:", error));
-            } else {
-                showMatrixAlert();
-                alert("Please upload a file first.");
-            }
+            formData.append("file", file);
+            formData.append("moveAbs", document.getElementById("moveAbs").value);
+            formData.append("moveJ", document.getElementById("moveJ").value);
+            formData.append("moveL", document.getElementById("moveL").value);
+            formData.append("moveC", document.getElementById("moveC").value);
+            formData.append("zoneAbs", document.getElementById("zoneAbs").value);
+            formData.append("zoneJ", document.getElementById("zoneJ").value);
+            formData.append("zoneL", document.getElementById("zoneL").value);
+            formData.append("zoneC", document.getElementById("zoneC").value);
+            formData.append("tool", document.getElementById("tool").value);
+            formData.append("userframe", document.getElementById("userframe").value);
+
+            fetch("/process-file-welding", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById("processedContent").innerHTML = data.processedText;
+            })
+            .catch(error => console.error("Error:", error));
         }
         
         function saveFile() {
