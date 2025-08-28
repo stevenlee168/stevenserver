@@ -40,71 +40,71 @@ def process():
     )
     return jsonify({"processedText": result})
 
-# @app.route("/process-file", methods=["POST"])
-# def process_file_U():
-#     try:
-#         if 'file' not in request.files:
-#             return jsonify({"error": "No file part"}), 400
-        
-#         file = request.files['file']
-#         if file.filename == '':
-#             return jsonify({"error": "No selected file"}), 400
-
-#         # Lưu file tạm
-#         file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-#         file.save(file_path)
-
-#         # Đọc nội dung file
-#         with open(file_path, "r", encoding="utf-8") as f:
-#             content = f.read()
-
-#         # Lấy dữ liệu từ form
-#         data = request.json
-#         moveAbs = request.form.get('moveAbs', '')
-#         print(f"moveAbs received: {moveAbs}")
-#         moveJ = request.form.get('moveJ', '')
-#         moveL = request.form.get('moveL', '')
-#         moveC = request.form.get('moveC', '')
-#         zoneAbs = request.form.get('zoneAbs', '')
-#         zoneJ = request.form.get('zoneJ', '')
-#         zoneL = request.form.get('zoneL', '')
-#         zoneC = request.form.get('zoneC', '')
-#         tool = request.form.get('tool', '')
-#         userframe = request.form.get('userframe', '')
-        
-#         result = process_file(
-#             content,
-#             moveAbs=moveAbs,
-#             moveJ=moveJ,
-#             moveL=moveL,
-#             moveC=moveC,
-#             zoneAbs=zoneAbs,
-#             zoneJ=zoneJ,
-#             zoneL=zoneL,
-#             zoneC=zoneC,
-#             tool=tool,
-#             userframe=userframe
-#         )
-#         result = process_content_upper(content)
-#         return jsonify({"processedText": result})
-
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
-
-@app.route('/process-file', methods=['POST'])
-def process_data():
+@app.route("/process-file", methods=["POST"])
+def process_file_U():
     try:
-        data = request.json  # Lấy JSON từ body
-        moveAbs = data.get('moveAbs', '')
-        moveJ = data.get('moveJ', '')
+        if 'file' not in request.files:
+            return jsonify({"error": "No file part"}), 400
+        
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({"error": "No selected file"}), 400
 
-        # Debug: in ra console
-        print(f"moveAbs: {moveAbs}, moveJ: {moveJ}")
+        # Lưu file tạm
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        file.save(file_path)
 
-        # Trả kết quả về client
-        return jsonify({"status": "success", "moveAbs": moveAbs, "moveJ": moveJ})
+        # Đọc nội dung file
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Lấy dữ liệu từ form
+        data = request.json
+        moveAbs = request.form.get('moveAbs', '')
+        print(f"moveAbs received: {moveAbs}")
+        moveJ = request.form.get('moveJ', '')
+        moveL = request.form.get('moveL', '')
+        moveC = request.form.get('moveC', '')
+        zoneAbs = request.form.get('zoneAbs', '')
+        zoneJ = request.form.get('zoneJ', '')
+        zoneL = request.form.get('zoneL', '')
+        zoneC = request.form.get('zoneC', '')
+        tool = request.form.get('tool', '')
+        userframe = request.form.get('userframe', '')
+        
+        result = process_file(
+            content,
+            moveAbs=moveAbs,
+            moveJ=moveJ,
+            moveL=moveL,
+            moveC=moveC,
+            zoneAbs=zoneAbs,
+            zoneJ=zoneJ,
+            zoneL=zoneL,
+            zoneC=zoneC,
+            tool=tool,
+            userframe=userframe
+        )
+        result = process_content_upper(content)
+        return jsonify({"processedText": result})
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+# @app.route('/process-file', methods=['POST'])
+# def process_data():
+#     try:
+#         data = request.json  # Lấy JSON từ body
+#         moveAbs = data.get('moveAbs', '')
+#         moveJ = data.get('moveJ', '')
+
+#         # Debug: in ra console
+#         print(f"moveAbs: {moveAbs}, moveJ: {moveJ}")
+
+#         # Trả kết quả về client
+#         return jsonify({"status": "success", "moveAbs": moveAbs, "moveJ": moveJ})
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
 
 def process_content_upper(text):
     # Ở đây bạn có thể gọi addToolAdj hoặc addCopyrightNotice
@@ -200,6 +200,7 @@ def process_file(uploaded_text, moveAbs, moveJ, moveL, moveC,
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
