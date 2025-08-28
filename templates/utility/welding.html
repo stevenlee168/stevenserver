@@ -498,6 +498,7 @@
             }
         }
 
+        /*
         function processFile(){
             const data = {
                 moveAbs: document.getElementById("moveAbs").value,
@@ -517,8 +518,8 @@
             })
             .catch(error => console.error("Error:", error));
         }
+        */
 
-        /*
         function processFile() {
             const fileInput = document.getElementById("fileInput");
             const file = fileInput.files[0];
@@ -529,54 +530,41 @@
             }
 
             const formData = new FormData();
-            formData.append("file", file);
-
-            fetch("/process-file", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text) });
-                }
-                return response.json();
-            })
-            .then(data => {
-                document.getElementById("processedContent").textContent = data.processedText;
-            })
-            .catch(error => console.error("Error:", error));
+            
             
             if (fileInput) {
-                const data = {
-                    uploadedText: document.getElementById('fileContent').value,
-                    moveAbs: document.getElementById('moveAbs').value,
-                    moveJ: document.getElementById('moveJ').value,
-                    moveL: document.getElementById('moveL').value,
-                    moveC: document.getElementById('moveC').value,
-                    zoneAbs: document.getElementById('zoneAbs').value,
-                    zoneJ: document.getElementById('zoneJ').value,
-                    zoneL: document.getElementById('zoneL').value,
-                    zoneC: document.getElementById('zoneC').value,
-                    tool: document.getElementById('tool').value,
-                    userframe: document.getElementById('userframe').value
-                };
+                formData.append("file", file);
+                formData.append("moveAbs", document.getElementById("moveAbs").value);
+                formData.append("moveJ", document.getElementById("moveJ").value);
+                formData.append("moveL", document.getElementById("moveL").value);
+                formData.append("moveC", document.getElementById("moveC").value);
+                formData.append("zoneAbs", document.getElementById("zoneAbs").value);
+                formData.append("zoneJ", document.getElementById("zoneJ").value);
+                formData.append("zoneL", document.getElementById("zoneL").value);
+                formData.append("zoneC", document.getElementById("zoneC").value);
+                formData.append("tool", document.getElementById("tool").value);
+                formData.append("userframe", document.getElementById("userframe").value);
     
-                fetch('/process', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(data)
+                fetch("/process-file", {
+                    method: "POST",
+                    body: formData
                 })
-                .then(res => res.json())
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => { throw new Error(text) });
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    document.getElementById('result').textContent = data.processedText;
-                });
+                    document.getElementById("processedContent").textContent = data.processedText;
+                })
+                .catch(error => console.error("Error:", error));
             } else {
                 showMatrixAlert();
                 alert("Please upload a file first.");
             }
-        }*/
+        }
         
-
         function saveFile() {
             let processedText = document.getElementById("processedContent").textContent;
             processedContent.classList.add("blink");
