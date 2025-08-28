@@ -154,7 +154,7 @@ def add_rtool_adj(text, tool_adj, tool_og):
     for line in lines:
         new_text.append(line)
         if line.strip().startswith("! ---"):  # Kiểm tra comment bắt đầu với ! ---
-            new_text.append(f'    <span class="highlight">{tool_adj}:=Modify_rTCP_Offset({tool_og},0,0,0,0,0,0);</span>')
+            new_text.append(f'    {tool_adj}:=Modify_rTCP_Offset({tool_og},0,0,0,0,0,0);')
             # Nếu bạn muốn giữ HTML tag giống JS:
             # new_text.append(f'    <span class="highlight">{tool_adj}:=Modify_rTCP_Offset(rtool_adj(processed_text, tool_adj, tool_og)
 
@@ -260,6 +260,7 @@ def process_file_db(uploaded_text, moveAbs, moveJ, moveL, moveC,
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
