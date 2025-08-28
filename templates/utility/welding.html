@@ -545,7 +545,7 @@
                 formData.append("tool", document.getElementById("tool").value);
                 formData.append("userframe", document.getElementById("userframe").value);
     
-                fetch("/process-file-welding", {
+                fetch("/process-file", {
                     method: "POST",
                     body: formData
                 })
