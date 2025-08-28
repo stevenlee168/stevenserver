@@ -497,7 +497,28 @@
                 reader.readAsText(file);
             }
         }
+
+        function processFile(){
+            const data = {
+                moveAbs: document.getElementById("moveAbs").value,
+                moveJ: document.getElementById("moveJ").value
+            };
         
+            fetch("/process-file", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                document.getElementById("result").innerText = JSON.stringify(result);
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        /*
         function processFile() {
             const fileInput = document.getElementById("fileInput");
             const file = fileInput.files[0];
@@ -525,7 +546,7 @@
             })
             .catch(error => console.error("Error:", error));
             
-            /*if (fileInput) {
+            if (fileInput) {
                 const data = {
                     uploadedText: document.getElementById('fileContent').value,
                     moveAbs: document.getElementById('moveAbs').value,
@@ -552,8 +573,9 @@
             } else {
                 showMatrixAlert();
                 alert("Please upload a file first.");
-            }*/
-        }
+            }
+        }*/
+        
 
         function saveFile() {
             let processedText = document.getElementById("processedContent").textContent;
