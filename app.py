@@ -40,8 +40,8 @@ def process():
     )
     return jsonify({"processedText": result})
 
-@app.route("/process-file", methods=["POST"])
-def process_file_U():
+@app.route("/process-file-welding", methods=["POST"])
+def process_file_welding():
     try:
         if 'file' not in request.files:
             return jsonify({"error": "No file part"}), 400
@@ -72,20 +72,20 @@ def process_file_U():
         # Lấy dữ liệu từ form
         # data = request.json
         
-        # result = process_file(
-        #     content,
-        #     moveAbs=moveAbs,
-        #     moveJ=moveJ,
-        #     moveL=moveL,
-        #     moveC=moveC,
-        #     zoneAbs=zoneAbs,
-        #     zoneJ=zoneJ,
-        #     zoneL=zoneL,
-        #     zoneC=zoneC,
-        #     tool=tool,
-        #     userframe=userframe
-        # )
-        result = process_content_upper(content)
+        result = process_file(
+            content,
+            moveAbs=moveAbs,
+            moveJ=moveJ,
+            moveL=moveL,
+            moveC=moveC,
+            zoneAbs=zoneAbs,
+            zoneJ=zoneJ,
+            zoneL=zoneL,
+            zoneC=zoneC,
+            tool=tool,
+            userframe=userframe
+        )
+        #result = process_content_upper(content)
         return jsonify({"processedText": result})
 
     except Exception as e:
@@ -200,6 +200,7 @@ def process_file(uploaded_text, moveAbs, moveJ, moveL, moveC,
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
