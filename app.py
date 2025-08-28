@@ -251,10 +251,31 @@ def process_file_db(uploaded_text, moveAbs, moveJ, moveL, moveC,
     processed_text = add_copyright_notice(processed_text)
 
     return processed_text
+
+def add_laser_off(text):
+    lines = text.split("\n")
+    new_lines = []
+
+    for i in range(len(lines)):
+        new_lines.append(lines[i])  # luôn giữ dòng hiện tại
+
+        # Nếu dòng hiện tại là MoveL
+        if lines[i].strip().startswith("MoveL"):
+            # Kiểm tra điều kiện
+            if (
+                i > 0 and lines[i - 1].strip().startswith("MoveL")  # dòng trước là MoveL
+                and i + 1 < len(lines) and lines[i + 1].strip().startswith("MoveL")  # dòng sau là MoveL
+                and i + 2 < len(lines) and lines[i + 2].strip().startswith("MoveJ")  # dòng sau nữa là MoveJ
+            ):
+                # Chèn Laser_Off
+                new_lines.append("    <span class="highlight">Laser_Off;</span>")
+
+    return "\n".join(new_lines)
     
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
