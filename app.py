@@ -158,9 +158,6 @@ def add_rtool_adj(text, tool_adj, tool_og):
             # Nếu bạn muốn giữ HTML tag giống JS:
             # new_text.append(f'    <span class="highlight">{tool_adj}:=Modify_rTCP_Offset(rtool_adj(processed_text, tool_adj, tool_og)
 
-    # Thêm copyright notice
-    processed_text = add_copyright_notice(processed_text)
-
     return processed_text
 
 def process_file_w(uploaded_text, moveAbs, moveJ, moveL, moveC,
@@ -260,6 +257,7 @@ def process_file_db(uploaded_text, moveAbs, moveJ, moveL, moveC,
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
