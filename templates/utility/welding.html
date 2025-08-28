@@ -532,9 +532,7 @@
                     return response.json();
                 })
                 .then(data => {
-                    document.getElementById("processedContent").innerText = data.processedText;
-                    let processed = data.processedText.replace(/(Modify_rTCP_Offset\(.*?\);)/g, '<span class="highlight">$1</span>');
-                    document.getElementById("processedContent").innerHTML = processed;
+                    document.getElementById("processedContent").innerHTML = data.processedText;
                 })
                 .catch(error => console.error("Error:", error));
             } else {
