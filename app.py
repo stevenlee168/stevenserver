@@ -23,7 +23,7 @@ def utility_page(page):
         return "Unexpected Error", 404
 
 #Welding URL
-@app.route("/process-file", methods=["POST"])
+@app.route("/process-file-welding", methods=["POST"])
 def process_file_w_URL():
     try:
         if 'file' not in request.files:
@@ -95,7 +95,6 @@ f"""  !===============================================================
         new_text.append(line)
         if line.strip().startswith("MODULE"):
             new_text.append(copyright_notice)
-
     return "\n".join(new_text)
 
 def add_rtool_adj(text, tool_adj, tool_og):
@@ -108,8 +107,7 @@ def add_rtool_adj(text, tool_adj, tool_og):
             new_text.append(f'    {tool_adj}:=Modify_rTCP_Offset({tool_og},0,0,0,0,0,0);')
             # Nếu bạn muốn giữ HTML tag giống JS:
             # new_text.append(f'    <span class="highlight">{tool_adj}:=Modify_rTCP_Offset(rtool_adj(processed_text, tool_adj, tool_og)
-
-    return processed_text
+    return "\n".join(new_text)
 
 def process_file_w(uploaded_text, moveAbs, moveJ, moveL, moveC,
                  zoneAbs, zoneJ, zoneL, zoneC,
@@ -153,11 +151,15 @@ def process_file_w(uploaded_text, moveAbs, moveJ, moveL, moveC,
     # Thêm Tool Adj logic nếu cần
     processed_text = add_rtool_adj(processed_text, tool_adj, tool_og)
 
+    # Thêm copyright notice
+    processed_text = add_copyright_notice(processed_text)
+
     return processed_text
     
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
