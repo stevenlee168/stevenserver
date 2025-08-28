@@ -153,14 +153,12 @@ def process_file_w(uploaded_text, moveAbs, moveJ, moveL, moveC,
     # Thêm Tool Adj logic nếu cần
     processed_text = add_rtool_adj(processed_text, tool_adj, tool_og)
 
-    # Thêm copyright notice
-    processed_text = add_copyright_notice(processed_text)
-
     return processed_text
     
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
