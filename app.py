@@ -22,26 +22,9 @@ def utility_page(page):
     except:
         return "Unexpected Error", 404
 
-@app.route('/process', methods=['POST'])
-def process():
-    data = request.json
-    result = process_file(
-        content,
-        moveAbs=data.get('moveAbs', ''),
-        moveJ=data.get('moveJ', ''),
-        moveL=data.get('moveL', ''),
-        moveC=data.get('moveC', ''),
-        zoneAbs=data.get('zoneAbs', ''),
-        zoneJ=data.get('zoneJ', ''),
-        zoneL=data.get('zoneL', ''),
-        zoneC=data.get('zoneC', ''),
-        tool=data.get('tool', ''),
-        userframe=data.get('userframe', '')
-    )
-    return jsonify({"processedText": result})
-
+#Welding URL
 @app.route("/process-file-welding", methods=["POST"])
-def process_file_welding():
+def process_file_w_URL():
     try:
         if 'file' not in request.files:
             return jsonify({"error": "No file part"}), 400
@@ -68,11 +51,8 @@ def process_file_welding():
         # Đọc nội dung file
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
-
-        # Lấy dữ liệu từ form
-        # data = request.json
         
-        result = process_file(
+        result = process_file_w(
             content,
             moveAbs=moveAbs,
             moveJ=moveJ,
@@ -91,24 +71,54 @@ def process_file_welding():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# @app.route('/process-file', methods=['POST'])
-# def process_data():
-#     try:
-#         data = request.json  # Lấy JSON từ body
-#         moveAbs = data.get('moveAbs', '')
-#         moveJ = data.get('moveJ', '')
+#Welding URL
+@app.route("/process-file-deburring", methods=["POST"])
+def process_file_db_URL():
+    try:
+        if 'file' not in request.files:
+            return jsonify({"error": "No file part"}), 400
+        
+        file = request.files['file']
+        moveAbs = request.form.get('moveAbs')
+        moveJ = request.form.get('moveJ')
+        moveL = request.form.get('moveL')
+        moveC = request.form.get('moveC')
+        zoneAbs = request.form.get('zoneAbs')
+        zoneJ = request.form.get('zoneJ')
+        zoneL = request.form.get('zoneL')
+        zoneC = request.form.get('zoneC')
+        tool = request.form.get('tool')
+        userframe = request.form.get('userframe')
+        
+        if not file:#file.filename == '':
+            return jsonify({"error": "No selected file"}), 400
 
-#         # Debug: in ra console
-#         print(f"moveAbs: {moveAbs}, moveJ: {moveJ}")
+        # Lưu file tạm
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        file.save(file_path)
 
-#         # Trả kết quả về client
-#         return jsonify({"status": "success", "moveAbs": moveAbs, "moveJ": moveJ})
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
+        # Đọc nội dung file
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        
+        result = process_file_w(
+            content,
+            moveAbs=moveAbs,
+            moveJ=moveJ,
+            moveL=moveL,
+            moveC=moveC,
+            zoneAbs=zoneAbs,
+            zoneJ=zoneJ,
+            zoneL=zoneL,
+            zoneC=zoneC,
+            tool=tool,
+            userframe=userframe
+        )
+        #result = process_content_upper(content)
+        return jsonify({"processedText": result})
 
-def process_content_upper(text):
-    # Ở đây bạn có thể gọi addToolAdj hoặc addCopyrightNotice
-    return text.upper()
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
     
 # Copyright
 def add_copyright_notice(processed_text):
@@ -137,7 +147,7 @@ f"""  !===============================================================
 
     return "\n".join(new_text)
 
-def add_tool_adj(text, tool_adj, tool_og):
+def add_rtool_adj(text, tool_adj, tool_og):
     lines = text.split("\n")
     new_text = []
 
@@ -150,7 +160,54 @@ def add_tool_adj(text, tool_adj, tool_og):
     
     return "\n".join(new_text)
 
-def process_file(uploaded_text, moveAbs, moveJ, moveL, moveC,
+def process_file_w(uploaded_text, moveAbs, moveJ, moveL, moveC,
+                 zoneAbs, zoneJ, zoneL, zoneC,
+                 tool, userframe):
+    if not uploaded_text:
+        raise ValueError("No uploaded text provided.")
+
+    tool_adj = tool + '_Adj'
+    tool_og = tool
+
+    processed_text = re.sub(r'PERS.*', '!===============================================================', uploaded_text)
+
+    # Update MoveAbsJ
+    processed_text = re.sub(
+        r'MoveAbsJ\s+\[\[([^\]]+)\],\[([^\]]+)\]\],(\w+),(\w+),(\w+)\\Wobj:=(\w+);',
+        fr'MoveAbsJ [[\1],[\2]],{moveAbs},{zoneAbs},{tool_adj}\\Wobj:={userframe};',
+        processed_text
+    )
+
+    # Update MoveJ
+    processed_text = re.sub(
+        r'MoveJ\s+\[\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\]\],\[[^\]]+\],(.*?),(\w+)\\Wobj:=(\w+);',
+        fr'MoveJ [[\1],[\2],[\3],[\4]],{moveJ},{zoneJ},{tool_adj}\\Wobj:={userframe};',
+        processed_text
+    )
+
+    # Update MoveL
+    processed_text = re.sub(
+        r'MoveL\s+\[\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\]\],\[[^\]]+\],(.*?),(\w+)\\Wobj:=(\w+);',
+        fr'MoveL [[\1],[\2],[\3],[\4]],{moveL},{zoneL},{tool_adj}\\Wobj:={userframe};',
+        processed_text
+    )
+
+    # Update MoveC
+    processed_text = re.sub(
+        r'MoveC\s+\[\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\]\],\[\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\]\],\[[^\]]+\],(.*?),(\w+)\\Wobj:=(\w+);',
+        fr'MoveC [[\1],[\2],[\3],[\4]],[[\5],[\6],[\7],[\8]],{moveC},{zoneC},{tool_adj}\\Wobj:={userframe};',
+        processed_text
+    )
+
+    # Thêm Tool Adj logic nếu cần
+    processed_text = add_tool_adj(processed_text, tool_adj, tool_og)
+
+    # Thêm copyright notice
+    processed_text = add_copyright_notice(processed_text)
+
+    return processed_text
+
+def process_file_db(uploaded_text, moveAbs, moveJ, moveL, moveC,
                  zoneAbs, zoneJ, zoneL, zoneC,
                  tool, userframe):
     if not uploaded_text:
@@ -200,6 +257,7 @@ def process_file(uploaded_text, moveAbs, moveJ, moveL, moveC,
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
