@@ -154,53 +154,9 @@ def add_rtool_adj(text, tool_adj, tool_og):
     for line in lines:
         new_text.append(line)
         if line.strip().startswith("! ---"):  # Kiểm tra comment bắt đầu với ! ---
-            new_text.append(f'    {tool_adj}:=Modify_rTCP_Offset({tool_og},0,0,0,0,0,0);')
+            new_text.append(f'    <span class="highlight">{tool_adj}:=Modify_rTCP_Offset({tool_og},0,0,0,0,0,0);</span>')
             # Nếu bạn muốn giữ HTML tag giống JS:
-            # new_text.append(f'    <span class="highlight">{tool_adj}:=Modify_rTCP_Offset({tool_og},0,0,0,0,0,0);</span>')
-    
-    return "\n".join(new_text)
-
-def process_file_w(uploaded_text, moveAbs, moveJ, moveL, moveC,
-                 zoneAbs, zoneJ, zoneL, zoneC,
-                 tool, userframe):
-    if not uploaded_text:
-        raise ValueError("No uploaded text provided.")
-
-    tool_adj = tool + '_Adj'
-    tool_og = tool
-
-    processed_text = re.sub(r'PERS.*', '!===============================================================', uploaded_text)
-
-    # Update MoveAbsJ
-    processed_text = re.sub(
-        r'MoveAbsJ\s+\[\[([^\]]+)\],\[([^\]]+)\]\],(\w+),(\w+),(\w+)\\Wobj:=(\w+);',
-        fr'MoveAbsJ [[\1],[\2]],{moveAbs},{zoneAbs},{tool_adj}\\Wobj:={userframe};',
-        processed_text
-    )
-
-    # Update MoveJ
-    processed_text = re.sub(
-        r'MoveJ\s+\[\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\]\],\[[^\]]+\],(.*?),(\w+)\\Wobj:=(\w+);',
-        fr'MoveJ [[\1],[\2],[\3],[\4]],{moveJ},{zoneJ},{tool_adj}\\Wobj:={userframe};',
-        processed_text
-    )
-
-    # Update MoveL
-    processed_text = re.sub(
-        r'MoveL\s+\[\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\]\],\[[^\]]+\],(.*?),(\w+)\\Wobj:=(\w+);',
-        fr'MoveL [[\1],[\2],[\3],[\4]],{moveL},{zoneL},{tool_adj}\\Wobj:={userframe};',
-        processed_text
-    )
-
-    # Update MoveC
-    processed_text = re.sub(
-        r'MoveC\s+\[\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\]\],\[\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\]\],\[[^\]]+\],(.*?),(\w+)\\Wobj:=(\w+);',
-        fr'MoveC [[\1],[\2],[\3],[\4]],[[\5],[\6],[\7],[\8]],{moveC},{zoneC},{tool_adj}\\Wobj:={userframe};',
-        processed_text
-    )
-
-    # Thêm Tool Adj logic nếu cần
-    processed_text = add_tool_adj(processed_text, tool_adj, tool_og)
+            # new_text.append(f'    <span class="highlight">{tool_adj}:=Modify_rTCP_Offset(rtool_adj(processed_text, tool_adj, tool_og)
 
     # Thêm copyright notice
     processed_text = add_copyright_notice(processed_text)
@@ -221,33 +177,7 @@ def process_file_db(uploaded_text, moveAbs, moveJ, moveL, moveC,
     # Update MoveAbsJ
     processed_text = re.sub(
         r'MoveAbsJ\s+\[\[([^\]]+)\],\[([^\]]+)\]\],(\w+),(\w+),(\w+)\\Wobj:=(\w+);',
-        fr'MoveAbsJ [[\1],[\2]],{moveAbs},{zoneAbs},{tool_adj}\\Wobj:={userframe};',
-        processed_text
-    )
-
-    # Update MoveJ
-    processed_text = re.sub(
-        r'MoveJ\s+\[\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\]\],\[[^\]]+\],(.*?),(\w+)\\Wobj:=(\w+);',
-        fr'MoveJ [[\1],[\2],[\3],[\4]],{moveJ},{zoneJ},{tool_adj}\\Wobj:={userframe};',
-        processed_text
-    )
-
-    # Update MoveL
-    processed_text = re.sub(
-        r'MoveL\s+\[\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\]\],\[[^\]]+\],(.*?),(\w+)\\Wobj:=(\w+);',
-        fr'MoveL [[\1],[\2],[\3],[\4]],{moveL},{zoneL},{tool_adj}\\Wobj:={userframe};',
-        processed_text
-    )
-
-    # Update MoveC
-    processed_text = re.sub(
-        r'MoveC\s+\[\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\]\],\[\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\],\[([^\]]+)\]\],\[[^\]]+\],(.*?),(\w+)\\Wobj:=(\w+);',
-        fr'MoveC [[\1],[\2],[\3],[\4]],[[\5],[\6],[\7],[\8]],{moveC},{zoneC},{tool_adj}\\Wobj:={userframe};',
-        processed_text
-    )
-
-    # Thêm Tool Adj logic nếu cần
-    processed_text = add_tool_adj(processed_text, tool_adj, tool_og)
+        fr'MoveAbsJ [[\1],[\2]],{moveAbs},{zoneAbs},{tool_adj}rtool_adj(processed_text, tool_adj, tool_og)
 
     # Thêm copyright notice
     processed_text = add_copyright_notice(processed_text)
@@ -257,6 +187,7 @@ def process_file_db(uploaded_text, moveAbs, moveJ, moveL, moveC,
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
