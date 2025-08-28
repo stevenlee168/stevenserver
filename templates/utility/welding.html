@@ -556,7 +556,7 @@
                     return response.json();
                 })
                 .then(data => {
-                    document.getElementById("processedContent").textContent = data.processedText;
+                    document.getElementById("processedContent").innerHTML = data.processedText;
                 })
                 .catch(error => console.error("Error:", error));
             } else {
