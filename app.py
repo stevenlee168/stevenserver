@@ -268,13 +268,138 @@ def add_laser_off(text):
                 and i + 2 < len(lines) and lines[i + 2].strip().startswith("MoveJ")  # dòng sau nữa là MoveJ
             ):
                 # Chèn Laser_Off
-                new_lines.append("    <span class="highlight">Laser_Off;</span>")
+                new_lines.append('    <span class="highlight">Laser_Off;</span>')
 
     return "\n".join(new_lines)
+
+def add_laser_process_param(text, param_map, laser_prc_par):
+    """
+    Thêm Laser_Process_Param_In vào sau MoveL khi:
+    - Trước MoveL là Laser_Punch_Cir_* và sau là MoveL => thêm 'Laser_Process_Param_In 25;'
+    - Trước MoveL là Laser_Punch_* và sau là MoveL => thêm 'Laser_Process_Param_In {param};'
+    """
+
+    lines = text.split("\n")
+    new_lines = []
+    current_section = ""
+
+    for i, line in enumerate(lines):
+        new_lines.append(line)  # giữ dòng hiện tại
+
+        # Track current section title
+        if line.strip().startswith("! ---"):
+            current_section = (
+                line.replace("! ---", "").replace("---", "").strip().lower()
+            )
+
+        # Nếu là MoveL
+        if line.strip().startswith("MoveL"):
+            prev_line = lines[i - 1].strip() if i > 0 else ""
+            next_line = lines[i + 1].strip() if i + 1 < len(lines) else ""
+            param = param_map.get(current_section, laser_prc_par)  # default
+
+            if prev_line.startswith("Laser_Punch_Cir_") and next_line.startswith("MoveL"):
+                new_lines.append("    Laser_Process_Param_In 25;")
+            elif prev_line.startswith("Laser_Punch_") and next_line.startswith("MoveL"):
+                new_lines.append(f"    Laser_Process_Param_In {param};")
+
+    return "\n".join(new_lines)
+
+def add_laser_punch_param(text, param_map, laser_pch_par, is_cir_mode):
+    """
+    Thêm Laser_Punch_Param_In vào sau MoveL khi:
+    - Nếu is_cir_mode == True và:
+        + trong 5~7 dòng trước có chứa '! --- Cir'
+        + dòng trước là MoveJ
+        + dòng sau là MoveL
+      => thêm 'Laser_Punch_Cir_Param_In 25;'
+    - Nếu:
+        + dòng trước là MoveJ
+        + dòng sau là MoveL
+      => thêm 'Laser_Punch_Param_In {param};'
+    """
+
+    lines = text.split("\n")
+    new_lines = []
+    current_section = ""
+
+    for i, line in enumerate(lines):
+        new_lines.append(line)  # giữ dòng hiện tại
+
+        # Track current section title
+        if line.strip().startswith("! ---"):
+            current_section = (
+                line.replace("! ---", "").replace("---", "").strip().lower()
+            )
+
+        if line.strip().startswith("MoveL"):
+            param = param_map.get(current_section, laser_pch_par)  # default
+            prev_line = lines[i - 1].strip() if i > 0 else ""
+            prev_line5 = lines[i - 5].strip() if i > 4 else ""
+            prev_line6 = lines[i - 6].strip() if i > 5 else ""
+            prev_line7 = lines[i - 7].strip() if i > 6 else ""
+            next_line = lines[i + 1].strip() if i + 1 < len(lines) else ""
+
+            if (
+                is_cir_mode
+                and (
+                    prev_line5.startswith("! --- Cir")
+                    or prev_line6.startswith("! --- Cir")
+                    or prev_line7.startswith("! --- Cir")
+                )
+                and prev_line.startswith("MoveJ")
+                and next_line.startswith("MoveL")
+            ):
+                new_lines.append("    Laser_Punch_Cir_Param_In 25;")
+            elif prev_line.startswith("MoveJ") and next_line.startswith("MoveL"):
+                new_lines.append(f"    Laser_Punch_Param_In {param};")
+
+    return "\n".join(new_lines)
+
+def add_laser_speed_param(text: str, param_map: dict, uf: str, uf_adj: str, laser_spd_par: int, is_advance_mode: bool, is_cir_mode: bool) -> str:
+    """
+    Thêm Laser_Speed_Param_In sau khi gặp comment và dòng MoveJ ngay sau nó.
+    - Nếu is_advance_mode = True: thêm Modify_DYN_Wobj_Offset
+    - Nếu comment bắt đầu bằng '! --- Cir' và is_cir_mode = True:
+        thêm Laser_Speed_Param_In 25
+    - Ngược lại:
+        thêm Laser_Speed_Param_In {param} (lấy từ param_map hoặc default = laser_spd_par)
+    """
+
+    lines = text.split("\n")
+    new_lines = []
+    current_section = ""
+
+    for i, line in enumerate(lines):
+        new_lines.append(line)
+
+        # Check for new section
+        if line.strip().startswith("! ---"):
+            current_section = (
+                line.replace("! ---", "").replace("---", "").strip().lower()
+            )
+
+        # Nếu dòng này là comment, và dòng sau có chứa MoveJ
+        if line.strip().startswith("!") and i + 1 < len(lines) and "MoveJ" in lines[i + 1]:
+            param = param_map.get(current_section, laser_spd_par)
+
+            if is_advance_mode:
+                new_lines.append(
+                    f"    {uf_adj}:=Modify_DYN_Wobj_Offset({uf},0,0,0,0,0,0);"
+                )
+
+            if line.strip().startswith("! --- Cir") and is_cir_mode:
+                new_lines.append("    Laser_Speed_Param_In 25;")
+            else:
+                new_lines.append(f"    Laser_Speed_Param_In {param};")
+
+    return "\n".join(new_lines)
+
     
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
