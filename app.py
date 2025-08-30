@@ -120,6 +120,40 @@ def process_file_db_URL():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/process-file-laser", methods=["POST"])
+def process_file_laser():
+    try:
+        if 'file' not in request.files:
+            return jsonify({"error": "No file part"}), 400
+            
+        file = request.files["file"]
+        text = file.read().decode("utf-8")
+
+        # paramMap từ bảng
+        raw_param_map = request.form.get("paramMap")
+        param_map = json.loads(raw_param_map) if raw_param_map else {}
+
+        # default values từ HTML input
+        defaults = {
+            "moveAbs": request.form.get("moveAbs"),
+            "moveJ": request.form.get("moveJ"),
+            "moveL": request.form.get("moveL"),
+            "moveC": request.form.get("moveC"),
+            "zoneAbs": request.form.get("zoneAbs"),
+            "zoneJ": request.form.get("zoneJ"),
+            "zoneL": request.form.get("zoneL"),
+            "zoneC": request.form.get("zoneC"),
+            "tool": request.form.get("tool"),
+            "userframe": request.form.get("userframe"),
+        }
+
+        # hàm xử lý
+        result = process_file_lct(text, param_map, defaults)
+        return jsonify({"processedText": result})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+        
 # Copyright
 def add_copyright_notice(processed_text):
     current_year = datetime.now().year
@@ -356,7 +390,7 @@ def add_laser_punch_param(text, param_map, laser_pch_par, is_cir_mode):
 
     return "\n".join(new_lines)
 
-def add_laser_speed_param(text: str, param_map: dict, uf: str, uf_adj: str, laser_spd_par: int, is_advance_mode: bool, is_cir_mode: bool) -> str:
+def add_laser_speed_param(text, param_map, uf, uf_adj, laser_spd_par, is_advance_mode, is_cir_mode):
     """
     Thêm Laser_Speed_Param_In sau khi gặp comment và dòng MoveJ ngay sau nó.
     - Nếu is_advance_mode = True: thêm Modify_DYN_Wobj_Offset
@@ -395,10 +429,14 @@ def add_laser_speed_param(text: str, param_map: dict, uf: str, uf_adj: str, lase
 
     return "\n".join(new_lines)
 
+def process_file_lct(text, param_map, defaults):
+    print(param_map)
+    return
     
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
