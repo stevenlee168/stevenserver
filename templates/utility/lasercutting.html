@@ -613,6 +613,9 @@
         function processFile() {
             const fileInput = document.getElementById("fileInput");
             const file = fileInput.files[0];
+            const advanceMode = document.getElementById("advanceModeCheckbox").checked;
+            const testMode = document.getElementById("testprogramModeCheckbox").checked;
+            const circleMode = document.getElementById("circleModeCheckbox").checked;
         
             if (!file) {
                 alert("Please select a file first!");
@@ -639,6 +642,11 @@
             formData.append("laserSpeed", document.getElementById("laser_spd_par").value);
             formData.append("laserPunch", document.getElementById("laser_pch_par").value);
             formData.append("laserProcess", document.getElementById("laser_prc_par").value);
+
+            // Checkbox
+            formData.append("advanceMode", advanceMode); // true / false
+            formData.append("testMode", testMode); // true / false
+            formData.append("circleMode", circleMode); // true / false
         
             fetch("/process-file-laser", { 
                 method: "POST",
@@ -982,6 +990,7 @@
     </script>
 </body>
 </html>
+
 
 
 
