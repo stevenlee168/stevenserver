@@ -133,6 +133,9 @@ def process_file_laser():
         # paramMap từ bảng
         raw_param_map = request.form.get("paramMap")
         param_map = json.loads(raw_param_map) if raw_param_map else {}
+        advance_mode = request.form.get("advanceMode", "false").lower() == "true"
+        test_mode = request.form.get("testMode", "false").lower() == "true"
+        circle_mode = request.form.get("circleMode", "false").lower() == "true"
 
         # default values từ HTML input
         defaults = {
@@ -437,6 +440,7 @@ def process_file_lct(text, param_map, defaults):
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
