@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from datetime import datetime
 import re
 import os
+import json
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -436,6 +437,7 @@ def process_file_lct(text, param_map, defaults):
 # Chạy server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
 
